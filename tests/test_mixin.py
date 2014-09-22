@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from mixin.mixin import Mixin, mixin, InstantiationMixinError, InvalidMixinError
+from mixin.mixin import Mixin, mixin, InstantiationMixinError, InvalidMixinError, InheritMixinError
 
 class TestCase(unittest.TestCase):
     def assertRaises(self, exception):
@@ -44,3 +44,6 @@ class TestMixin(TestCase):
         self.assertTrue(hasattr(A, 'func_mixin_a'))
         a = A()
         self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+    def test_inherit_mixin(self):
+        with self.assertRaises(InheritMixinError):
+            class A(self.MixinA): pass
