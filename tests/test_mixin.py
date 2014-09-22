@@ -113,3 +113,37 @@ class TestMixin(TestCase):
         self.assertTrue(hasattr(A, 'func_mixin_a'))
         a = A()
         self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+
+    def test_current_class_overite(self):
+        @mixin(self.MixinA)
+        class A(object):
+            def func_mixin_a(self):
+                return 'do_func_in_real_class'
+        a = A()
+        self.assertEqual('do_func_in_real_class', a.func_mixin_a())
+
+    def test_father_class_overrite(self):
+        class M(object):
+            def func_mixin_a(self):
+                return 'do_func_in_father_class'
+        @mixin(self.MixinA)
+        class A(M): pass
+        a = A()
+        self.assertEqual('do_func_in_father_class', a.func_mixin_a())
+
+    def test_multi_metaclass(self):
+        class MetaM(type): pass
+        class M(object):
+            __metaclass__ = MetaM
+        @mixin(self.MixinA)
+        class A(M): pass
+        self.assertTrue(hasattr(A, 'func_mixin_a'))
+        a = A()
+        self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+
+    def test_old_style_class(self):
+        @mixin(self.MixinA)
+        class A(): pass
+        self.assertTrue(hasattr(A, 'func_mixin_a'))
+        a = A()
+        self.assertEqual('do_func_mixin_a', a.func_mixin_a())
