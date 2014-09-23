@@ -31,6 +31,12 @@ class TestMixin(TestCase):
             def func_mixin_c(self):
                 return 'do_func_mixin_c'
         self.MixinC_A = MixinC_A
+        @mixin(MixinB)
+        @mixin(MixinA)
+        class MixinC_A_B(Mixin):
+            def func_mixin_c(self):
+                return 'do_func_mixin_c'
+        self.MixinC_A_B = MixinC_A_B
         class MixinShadowA(Mixin):
             def func_mixin_a(self):
                 return 'do_func_mixin_shadow_a'
@@ -43,6 +49,10 @@ class TestMixin(TestCase):
     def test_instantiation_inherit_mixin(self):
         with self.assertRaises(InstantiationMixinError):
             self.MixinC_A()
+
+    def test_instantiation_inherit_two_level_mixin(self):
+        with self.assertRaises(InstantiationMixinError):
+            self.MixinC_A_B()
 
     def test_inherit_simple_mixin_to_normal(self):
         with self.assertRaises(InheritMixinError):
@@ -66,6 +76,17 @@ class TestMixin(TestCase):
         self.assertTrue(hasattr(A, 'func_mixin_c'))
         a = A()
         self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+        self.assertEqual('do_func_mixin_c', a.func_mixin_c())
+
+    def test_using_inherit_two_level_mixin(self):
+        @mixin(self.MixinC_A_B)
+        class A(object): pass
+        self.assertTrue(hasattr(A, 'func_mixin_a'))
+        self.assertTrue(hasattr(A, 'func_mixin_b'))
+        self.assertTrue(hasattr(A, 'func_mixin_c'))
+        a = A()
+        self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+        self.assertEqual('do_func_mixin_b', a.func_mixin_b())
         self.assertEqual('do_func_mixin_c', a.func_mixin_c())
 
     def test_multi_level_mixin(self):
