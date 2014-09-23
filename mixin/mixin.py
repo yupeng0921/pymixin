@@ -35,26 +35,39 @@ def mixin(*clses):
     for cls in clses:
         if not (hasattr(cls, '__mixin__') and getattr(cls, '__mixin__')):
             raise InvalidMixinError(cls)
-    def generate_mixin(ori_cls):
-        ori_type = type(ori_cls)
+    def generate_mixin(orig_cls):
+        ori_type = type(orig_cls)
         normal_types = six.class_types + (MixinMeta,)
         if ori_type in normal_types:
             new_type = MixinMeta
         else:
             new_type = type('MixinMeta', (MixinMeta, ori_type), {})
-        dct = {}
+        orig_vars = orig_cls.__dict__.copy()
+        slots = orig_vars.get('__slots__')
+        if slots is not None:
+            if isinstance(slots, str):
+                slots = [slots]
+            for slots_var in slots:
+                orig_vars.pop(slots_var)
+        orig_vars.pop('__dict__', None)
+        orig_vars.pop('__weakref__', None)
         try:
-            is_mixin = getattr(ori_cls, '__mixin__')
+            is_mixin = getattr(orig_cls, '__mixin__')
         except Exception as exc:
             is_mixin = False
-        dct['__mixin__'] = is_mixin
+        orig_vars['__mixin__'] = is_mixin
         if not is_mixin:
             try:
-                ori_new = getattr(ori_cls, '__new__')
+                orig_new = getattr(orig_cls, '__new__')
             except Exception as exc:
-                ori_new = getattr(object, '__new__')
-            dct['__new__'] = ori_new
-        return new_type(ori_cls.__name__,
-                        (ori_cls,)+tuple(clses),
-                        dct)
+                orig_new = getattr(object, '__new__')
+            orig_vars['__new__'] = orig_new
+        orig_bases = list(orig_cls.__bases__)
+        if object in orig_bases:
+            orig_bases.remove(object)
+        if Mixin in orig_bases:
+            orig_bases.remove(Mixin)
+        return new_type(orig_cls.__name__,
+                        tuple(orig_bases) + tuple(clses),
+                        orig_vars)
     return generate_mixin
