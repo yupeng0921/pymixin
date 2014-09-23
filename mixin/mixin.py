@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import types
+import six
 
 class InstantiationMixinError(Exception):
     pass
@@ -27,8 +28,8 @@ class MixinMeta(type):
             raise InheritMixinError(clsname)
         return super(MixinMeta, cls).__new__(cls, clsname, bases, dct)
 
-class Mixin(object):
-    __metaclass__ = MixinMeta
+@six.add_metaclass(MixinMeta)
+class Mixin(object): pass
 
 def mixin(*clses):
     for cls in clses:
