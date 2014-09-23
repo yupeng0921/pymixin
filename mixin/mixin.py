@@ -37,20 +37,21 @@ def mixin(*clses):
             raise InvalidMixinError(cls)
     def generate_mixin(ori_cls):
         ori_type = type(ori_cls)
-        if ori_type in (types.ClassType, types.TypeType, MixinMeta):
+        normal_types = six.class_types + (MixinMeta,)
+        if ori_type in normal_types:
             new_type = MixinMeta
         else:
             new_type = type('MixinMeta', (MixinMeta, ori_type), {})
         dct = {}
         try:
             is_mixin = getattr(ori_cls, '__mixin__')
-        except Exception,e:
+        except Exception as exc:
             is_mixin = False
         dct['__mixin__'] = is_mixin
         if not is_mixin:
             try:
                 ori_new = getattr(ori_cls, '__new__')
-            except Exception, e:
+            except Exception as exc:
                 ori_new = getattr(object, '__new__')
             dct['__new__'] = ori_new
         return new_type(ori_cls.__name__,

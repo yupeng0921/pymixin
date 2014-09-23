@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-__all__ = ['mixin', 'Mixin', 'InstantiationMixinError', 'InvalidMixinError']
+__all__ = ['mixin', 'Mixin', 'InstantiationMixinError', 'InvalidMixinError', 'InheritMixinError']
 
-try:
-    from mixin import mixin, Mixin, InstantiationMixinError, InvalidMixinError
-except Exception, e:
-    pass
+from .mixin import mixin, Mixin, InstantiationMixinError, InvalidMixinError, InheritMixinError
