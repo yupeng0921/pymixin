@@ -35,16 +35,11 @@ def mixin(*clses):
         if not (hasattr(cls, '__mixin__') and getattr(cls, '__mixin__')):
             raise InvalidMixinError(cls)
     def generate_mixin(ori_cls):
-        meta_clses = []
-        ignore_clses = (types.ClassType, types.TypeType, MixinMeta)
-        for base in ori_cls.__bases__:
-            base_type = type(base)
-            if base_type not in ignore_clses and base_type not in meta_clses:
-                meta_clses.append(base_type)
-        if meta_clses:
-            new_type = type('MixinMeta', (MixinMeta,)+tuple(meta_clses), {})
-        else:
+        ori_type = type(ori_cls)
+        if ori_type in (types.ClassType, types.TypeType, MixinMeta):
             new_type = MixinMeta
+        else:
+            new_type = type('MixinMeta', (MixinMeta, ori_type), {})
         dct = {}
         try:
             is_mixin = getattr(ori_cls, '__mixin__')
