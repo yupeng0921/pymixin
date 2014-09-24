@@ -90,10 +90,9 @@ def mixin(*clses):
                 orig_new = getattr(object, '__new__')
             orig_vars['__new__'] = orig_new
         orig_bases = list(orig_cls.__bases__)
-        if object in orig_bases:
-            orig_bases.remove(object)
-        if Mixin in orig_bases:
-            orig_bases.remove(Mixin)
+        for base in (object, Mixin):
+            if base in orig_bases:
+                orig_bases.remove(base)
         return new_type(orig_cls.__name__,
                         tuple(orig_bases) + tuple(clses),
                         orig_vars)
