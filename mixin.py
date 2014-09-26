@@ -4,7 +4,6 @@ import sys
 import types
 
 __all__ = ['mixin', 'Mixin', 'InstantiationMixinError', 'InvalidMixinError', 'InheritMixinError']
-__version__ = '1.0'
 
 # class_types and add_metaclass were copied from six
 
