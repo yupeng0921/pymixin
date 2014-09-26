@@ -55,7 +55,6 @@ class MixinMeta(type):
             dct.pop('__mixin__')
             valid_mixin = True
         if not valid_mixin:
-            print(dct)
             raise InheritMixinError(clsname)
         dct['__new__'] = mixin_new
         return super(MixinMeta, cls).__new__(cls, clsname, bases, dct)
