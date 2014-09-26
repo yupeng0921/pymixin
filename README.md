@@ -10,7 +10,7 @@ http://en.wikipedia.org/wiki/Mixin
 
 install it from pip:
 
-    pip install pymixin
+    pip install mixin
 
 In fact, the pymix package only has one file, it is mixin.py, so you can also copy it directly to your project directory.
 

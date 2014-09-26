@@ -17,7 +17,7 @@ except Exception:
 
 setup(
     name = "mixin",
-    version = "1.0",
+    version = "1.1",
     keywords = ("mixin"),
     description = "python mixin tool",
     long_description=mixin_long_description,
