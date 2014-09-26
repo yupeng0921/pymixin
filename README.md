@@ -1,8 +1,9 @@
 # do mixin for python
+  This project wants to do a mixin library like ruby's module.
 
 ## What mixin is
 In object-oriented programming languages, a mixin is a class which contains a combination of methods from other classes. How such a combination is done depends on the language, but it is not by inheritance. If a combination contains all methods of combined classes it is equivalent to multiple inheritance.
-refer to this wiki:
+For more information, please refer to this wiki:
 http://en.wikipedia.org/wiki/Mixin
 
 ## install pymixin
@@ -21,14 +22,14 @@ Import the Mixin class and mixin decorator from the mixin module:
 
     >>> from mixin import Mixin, mixin
 
-The user's mixin should always inherit from the Mixin class:
+The user's mixin class should always inherit from the Mixin class:
 
     >>> class MixinA(Mixin):
     ...     def func_mixin_a(self):
     ...             return 'do_func_mixin_a'
     ...
 
-and then use the mixin decorator add the mixin:
+and then use the mixin decorator to add the mixin to a class:
 
     >>> @mixin(MixinA)
     ... class A(object): pass
@@ -88,7 +89,7 @@ Then add the MixinB to a normal class
 
 ### inherit multi mixin
 
-Two kind of method to inherti multi mixin, one is write multi mixins in one decorator:
+Two kind of methods to inherti multi mixins, one is writing multi mixins in one decorator:
 
     >>> class MixinA(Mixin): pass
     ...
@@ -107,7 +108,7 @@ Another is using multi decorators:
 
 ### inherit priority
 
-When write multi mixin to one decorator, the left mixin has a higher priority
+When writes multi mixins to one decorator, the left mixin has a higher priority
 
     >>> class MixinA(Mixin):
     ...     def mixin_func(self):
@@ -124,7 +125,7 @@ When write multi mixin to one decorator, the left mixin has a higher priority
     >>> m.mixin_func()
     'do_mixin_a'
 
-When write multi mixin in multi decorators, the up level mixin has a higher priority:
+When writes multi mixins in multi decorators, the up mixin has a higher priority:
 
     >>> @mixin(MixinA)
     ... @mixin(MixinB)
@@ -134,7 +135,7 @@ When write multi mixin in multi decorators, the up level mixin has a higher prio
     >>> m.mixin_func()
     'do_mixin_a'
 
-If the class have funciton which has the same name as the mixin, the mixin method will be overwrite:
+If the class has a funciton which has the same name as the mixin, the mixin method will be overwrite:
 
     >>> class MixinA(Mixin):
     ...     def mixin_func(self):
