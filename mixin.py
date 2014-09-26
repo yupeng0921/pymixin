@@ -100,7 +100,6 @@ def mixin(*clses):
             orig_vars['__mixin__'] = True
             if Mixin in orig_bases:
                 orig_bases.remove(Mixin)
-        # print('type: %s name: %s' % (orig_type, orig_cls.__name__))
         return orig_type(orig_cls.__name__,
                          tuple(copied_clses) + tuple(orig_bases),
                          orig_vars)
