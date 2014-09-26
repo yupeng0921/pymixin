@@ -1,5 +1,5 @@
 # do mixin for python
-  This project wants to do a mixin library like ruby's module.
+  This project wants to implement a mixin library like ruby's module.
 
 ## What mixin is
 In object-oriented programming languages, a mixin is a class which contains a combination of methods from other classes. How such a combination is done depends on the language, but it is not by inheritance. If a combination contains all methods of combined classes it is equivalent to multiple inheritance.
