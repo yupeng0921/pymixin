@@ -4,6 +4,7 @@ import sys
 import types
 
 __all__ = ['mixin', 'Mixin', 'InstantiationMixinError', 'InvalidMixinError', 'InheritMixinError']
+__version__ = '1.0'
 
 # class_types and add_metaclass were copied from six
 
@@ -42,58 +43,66 @@ class InheritMixinError(Exception):
 def mixin_new(cls, *args, **kwargs):
     raise InstantiationMixinError(cls)
 
+MIXIN_CLASS = None
 class MixinMeta(type):
     def __new__(cls, clsname, bases, dct):
-        if clsname == 'Mixin':
-            dct['__mixin__'] = True
-        elif (len(bases) == 1) and bases[0].__name__ == 'Mixin':
-            dct['__mixin__'] = True
-        if '__mixin__' in dct:
-            if dct['__mixin__']:
-                dct['__new__'] = mixin_new
-        else:
+        valid_mixin = False
+        if MIXIN_CLASS == None and clsname == 'Mixin' and bases == (object,):
+            valid_mixin = True
+        elif bases == (MIXIN_CLASS,):
+            valid_mixin = True
+        elif '__mixin__' in dct:
+            dct.pop('__mixin__')
+            valid_mixin = True
+        if not valid_mixin:
+            print(dct)
             raise InheritMixinError(clsname)
+        dct['__new__'] = mixin_new
         return super(MixinMeta, cls).__new__(cls, clsname, bases, dct)
 
 @add_metaclass(MixinMeta)
 class Mixin(object): pass
 
+MIXIN_CLASS = Mixin
+
+def copy_cls_vars(cls):
+    cls_vars = cls.__dict__.copy()
+    slots = cls_vars.get('__slots__')
+    if slots is not None:
+        if isinstance(slots, str):
+            slots = [slots]
+        for slots_var in slots:
+            cls_vars.pop(slots_var)
+    cls_vars.pop('__dict__', None)
+    cls_vars.pop('__weakref__', None)
+    return cls_vars
+
+def copy_mixin(cls):
+    cls_vars = copy_cls_vars(cls)
+    cls_vars.pop('__new__')
+    cls_bases = list(cls.__bases__)
+    if Mixin in cls_bases:
+        cls_bases.remove(Mixin)
+        cls_bases.append(object)
+    return type(cls.__name__, tuple(cls_bases), cls_vars)
+
 def mixin(*clses):
+    copied_clses = []
     for cls in clses:
-        if not (hasattr(cls, '__mixin__') and getattr(cls, '__mixin__')):
+        if type(cls) != MixinMeta:
             raise InvalidMixinError(cls)
+        copied_cls = copy_mixin(cls)
+        copied_clses.append(copied_cls)
     def generate_mixin(orig_cls):
-        ori_type = type(orig_cls)
-        normal_types = class_types + (MixinMeta,)
-        if ori_type in normal_types:
-            new_type = MixinMeta
-        else:
-            new_type = type('MixinMeta', (MixinMeta, ori_type), {})
-        orig_vars = orig_cls.__dict__.copy()
-        slots = orig_vars.get('__slots__')
-        if slots is not None:
-            if isinstance(slots, str):
-                slots = [slots]
-            for slots_var in slots:
-                orig_vars.pop(slots_var)
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        try:
-            is_mixin = getattr(orig_cls, '__mixin__')
-        except Exception as exc:
-            is_mixin = False
-        orig_vars['__mixin__'] = is_mixin
-        if not is_mixin:
-            try:
-                orig_new = getattr(orig_cls, '__new__')
-            except Exception as exc:
-                orig_new = getattr(object, '__new__')
-            orig_vars['__new__'] = orig_new
+        orig_vars = copy_cls_vars(orig_cls)
         orig_bases = list(orig_cls.__bases__)
-        for base in (object, Mixin):
-            if base in orig_bases:
-                orig_bases.remove(base)
-        return new_type(orig_cls.__name__,
-                        tuple(orig_bases) + tuple(clses),
-                        orig_vars)
+        orig_type = type(orig_cls)
+        if orig_type == MixinMeta:
+            orig_vars['__mixin__'] = True
+            if Mixin in orig_bases:
+                orig_bases.remove(Mixin)
+        # print('type: %s name: %s' % (orig_type, orig_cls.__name__))
+        return orig_type(orig_cls.__name__,
+                         tuple(copied_clses) + tuple(orig_bases),
+                         orig_vars)
     return generate_mixin

@@ -115,8 +115,8 @@ class TestMixin(TestCase):
         a = A()
         self.assertEqual('do_func_mixin_shadow_a', a.func_mixin_a())
 
-        @mixin(self.MixinShadowA)
         @mixin(self.MixinA)
+        @mixin(self.MixinShadowA)
         class A(object): pass
         self.assertTrue(hasattr(A, 'func_mixin_a'))
         a = A()
@@ -150,7 +150,7 @@ class TestMixin(TestCase):
         @mixin(self.MixinA)
         class A(M): pass
         a = A()
-        self.assertEqual('do_func_in_father_class', a.func_mixin_a())
+        self.assertEqual('do_func_mixin_a', a.func_mixin_a())
 
     def test_multi_metaclass(self):
         class MetaM(type): pass
@@ -168,3 +168,23 @@ class TestMixin(TestCase):
         self.assertTrue(hasattr(A, 'func_mixin_a'))
         a = A()
         self.assertEqual('do_func_mixin_a', a.func_mixin_a())
+
+    def test_inherit_from_mixined_class(self):
+        @mixin(self.MixinA)
+        class A(): pass
+        class M(A): pass
+        self.assertTrue(hasattr(M, 'func_mixin_a'))
+        m = M()
+        self.assertEqual('do_func_mixin_a', m.func_mixin_a())
+
+    def test_multi_inherit_from_mixined_class(self):
+        @mixin(self.MixinA)
+        class A(): pass
+        @mixin(self.MixinB)
+        class B(): pass
+        class M(A, B): pass
+        self.assertTrue(hasattr(M, 'func_mixin_a'))
+        self.assertTrue(hasattr(M, 'func_mixin_b'))
+        m = M()
+        self.assertEqual('do_func_mixin_a', m.func_mixin_a())
+        self.assertEqual('do_func_mixin_b', m.func_mixin_b())

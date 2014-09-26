@@ -1,28 +1,22 @@
 from setuptools import setup, find_packages
 
-PACKAGE = "mixin"
-NAME = "mixin"
-KEYWORDS = ("mixin")
-VERSION = '0.1'
-DESCRIPTION = "pythone mixin tool"
-LICENSE = 'MIT License'
-URL = ""
-AUTHOR = "yupeng"
-AUTHOR_EMAIL = "yupeng0921@gmail.com"
+mixin_classifiers = [
+    "Programming Language :: Python :: 2.6",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+]
+
+import mixin
 
 setup(
-        name = NAME,
-        version = VERSION,
-        keywords = KEYWORDS,
-        description = DESCRIPTION,
-        license = LICENSE,
-
-        url = URL,
-        author = AUTHOR,
-        author_email = AUTHOR_EMAIL,
-
-        packages = find_packages(),
-        include_package_data = True,
-        platforms = 'any',
-        install_requires = [],
+    name = "mixin",
+    version = mixin.__version__,
+    keywords = ("mixin"),
+    description = "python mixin tool",
+    license = "MIT",
+    url = "https://github.com/yupeng820921/pymixin",
+    author = "yupeng",
+    author_email = "yupeng0921@gmail.com",
+    platforms = 'any',
+    classifiers=mixin_classifiers,
 )
