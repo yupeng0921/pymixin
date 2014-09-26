@@ -89,7 +89,7 @@ Then add the MixinB to a normal class
 
 ### inherit multi mixin
 
-Two kind of methods to inherti multi mixins, one is writing multi mixins in one decorator:
+Two kind of methods to inherit multi mixins, one is writing multi mixins in one decorator:
 
     >>> class MixinA(Mixin): pass
     ...
@@ -167,3 +167,6 @@ If a class has a father class, and the father class has a same name method as th
     >>> a.mixin_func()
     'do_mixin_a'
 
+## python version support
+
+Tested on python2.6, python2.7 and python3.4
